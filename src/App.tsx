@@ -102,7 +102,9 @@ function App() {
               submitting={submitting}
               handleSubmitIdea={handleSubmitIdea}
               ideas={ideas}
-             user={user}
+              user={user}
+              selectedMedia={selectedMedia}
+              setSelectedMedia={setSelectedMedia}
             />
           </Layout>
         } />
@@ -118,6 +120,8 @@ interface MainAppProps {
   handleSubmitIdea: (text: string, options?: { priority?: number; targetAudience?: string; keywords?: string[] }) => Promise<void>
   ideas: Idea[]
   user: any
+  selectedMedia: any
+  setSelectedMedia: (media: any) => void
 }
 
 const MainApp: React.FC<MainAppProps> = ({ 
@@ -126,7 +130,9 @@ const MainApp: React.FC<MainAppProps> = ({
   submitting, 
   handleSubmitIdea, 
   ideas,
-  user
+  user,
+  selectedMedia,
+  setSelectedMedia
 }) => {
   const tabs = [
     { id: 'submit' as Tab, label: 'Submit Idea', icon: Lightbulb },
