@@ -5,12 +5,14 @@ import { AuthForm } from './components/AuthForm'
 import { IdeaSubmissionForm } from './components/IdeaSubmissionForm'
 import { PipelineStatus } from './components/PipelineStatus'
 import { AnalyticsDashboard } from './components/AnalyticsDashboard'
+import { SchedulerPage } from './components/SchedulerPage'
+import { MediaPreview } from './components/MediaPreview'
 import { Layout } from './components/Layout'
 import { TermsPage } from './pages/TermsPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { apiService, Idea } from './services/api'
 
-type Tab = 'submit' | 'pipeline' | 'analytics'
+type Tab = 'submit' | 'pipeline' | 'scheduler' | 'analytics'
 
 function App() {
   const [user, setUser] = useState<any>(null)
@@ -18,6 +20,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>('submit')
   const [ideas, setIdeas] = useState<Idea[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [selectedMedia, setSelectedMedia] = useState<any>(null)
 
   useEffect(() => {
     checkUser()
@@ -123,6 +126,7 @@ const MainApp: React.FC<MainAppProps> = ({
   const tabs = [
     { id: 'submit' as Tab, label: 'Submit Idea', icon: Lightbulb },
     { id: 'pipeline' as Tab, label: 'Pipeline', icon: Cog },
+    { id: 'scheduler' as Tab, label: 'Scheduler', icon: Calendar },
     { id: 'analytics' as Tab, label: 'Analytics', icon: BarChart3 }
   ]
 
@@ -155,11 +159,26 @@ const MainApp: React.FC<MainAppProps> = ({
         )}
         
         {activeTab === 'pipeline' && (
-          <PipelineStatus ideas={ideas} />
+          <PipelineStatus ideas={ideas} onPreviewMedia={setSelectedMedia} />
+        )}
+        
+        {activeTab === 'scheduler' && (
+          <SchedulerPage onPreviewMedia={setSelectedMedia} />
         )}
         
         {activeTab === 'analytics' && (
           <AnalyticsDashboard />
+        )}
+        
+        {selectedMedia && (
+          <MediaPreview 
+            media={selectedMedia} 
+            onClose={() => setSelectedMedia(null)}
+            onSchedule={() => {
+              setSelectedMedia(null)
+              setActiveTab('scheduler')
+            }}
+          />
         )}
       </div>
     </>

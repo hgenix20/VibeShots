@@ -1,13 +1,14 @@
 import React from 'react'
-import { Clock, Cog, FileText, Video, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { Clock, Cog, FileText, Video, Calendar, CheckCircle, XCircle, AlertCircle, Play } from 'lucide-react'
 import { format } from 'date-fns'
 import { Idea } from '../services/api'
 
 interface PipelineStatusProps {
   ideas: Idea[]
+  onPreviewMedia?: (media: any) => void
 }
 
-export const PipelineStatus: React.FC<PipelineStatusProps> = ({ ideas }) => {
+export const PipelineStatus: React.FC<PipelineStatusProps> = ({ ideas, onPreviewMedia }) => {
   const getStatusIcon = (status: Idea['status']) => {
     switch (status) {
       case 'queued':
@@ -88,13 +89,10 @@ export const PipelineStatus: React.FC<PipelineStatusProps> = ({ ideas }) => {
       {/* Pipeline Overview */}
       <div className="bg-white/70 backdrop-blur-sm border border-purple-100 rounded-xl p-6 shadow-lg">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Pipeline Overview</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
-            { status: 'queued', label: 'Queued', color: 'orange' },
             { status: 'processing', label: 'Processing', color: 'purple' },
-            { status: 'script_generated', label: 'Script Ready', color: 'blue' },
             { status: 'media_ready', label: 'Media Ready', color: 'green' },
-            { status: 'scheduled', label: 'Scheduled', color: 'indigo' },
             { status: 'published', label: 'Published', color: 'emerald' },
             { status: 'failed', label: 'Failed', color: 'red' }
           ].map(({ status, label, color }) => {
@@ -117,7 +115,7 @@ export const PipelineStatus: React.FC<PipelineStatusProps> = ({ ideas }) => {
         </div>
         
         <div className="divide-y divide-gray-200/50">
-          {ideas.filter(idea => idea.status !== 'published').map((idea) => (
+          {ideas.filter(idea => !['published', 'scheduled'].includes(idea.status)).map((idea) => (
             <div key={idea.id} className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1 min-w-0">
@@ -174,10 +172,31 @@ export const PipelineStatus: React.FC<PipelineStatusProps> = ({ ideas }) => {
                   <p className="text-sm text-red-700">{idea.error_message}</p>
                 </div>
               )}
+
+              {/* Preview Button for Media Ready */}
+              {idea.status === 'media_ready' && onPreviewMedia && (
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={() => onPreviewMedia({
+                      id: idea.id,
+                      idea: idea,
+                      script: idea.scripts?.[0],
+                      duration: 60,
+                      file_size: 5000000,
+                      format: 'mp4',
+                      status: 'ready'
+                    })}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:from-purple-700 hover:to-pink-700 flex items-center space-x-2"
+                  >
+                    <Play className="h-4 w-4" />
+                    <span>Preview & Schedule</span>
+                  </button>
+                </div>
+              )}
             </div>
           ))}
           
-          {ideas.filter(idea => idea.status !== 'published').length === 0 && (
+          {ideas.filter(idea => !['published', 'scheduled'].includes(idea.status)).length === 0 && (
             <div className="text-center py-12 text-gray-500">
               <Cog className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <p className="text-lg font-medium">No active ideas</p>
