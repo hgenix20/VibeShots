@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { TrendingUp, Eye, Heart, Share, DollarSign, Clock, RotateCcw, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import { DashboardData, apiService } from '../services/api'
+import { TikTokConnector } from './TikTokConnector'
 
-export const AnalyticsDashboard: React.FC = () => {
+interface AnalyticsDashboardProps {
+  user?: any
+}
+
+export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ user }) => {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [timeRange, setTimeRange] = useState('7d')
@@ -46,6 +51,9 @@ export const AnalyticsDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* TikTok Connection Status */}
+      <TikTokConnector user={user} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>

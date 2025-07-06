@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Video, Lightbulb, BarChart3, Cog, LogOut } from 'lucide-react'
+import { Video, Lightbulb, BarChart3, Cog, LogOut, Calendar } from 'lucide-react'
 import { AuthForm } from './components/AuthForm'
 import { IdeaSubmissionForm } from './components/IdeaSubmissionForm'
 import { PipelineStatus } from './components/PipelineStatus'
@@ -167,7 +167,7 @@ const MainApp: React.FC<MainAppProps> = ({
         )}
         
         {activeTab === 'analytics' && (
-          <AnalyticsDashboard />
+          <AnalyticsDashboard user={user} />
         )}
         
         {selectedMedia && (

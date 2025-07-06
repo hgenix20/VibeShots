@@ -1,5 +1,5 @@
 import React from 'react'
-import { ExternalLink, CheckCircle, AlertCircle } from 'lucide-react'
+import { ExternalLink, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react'
 
 interface TikTokConnectorProps {
   user: any
@@ -23,21 +23,21 @@ export const TikTokConnector: React.FC<TikTokConnectorProps> = ({ user }) => {
 
   return (
     <div className="bg-white/70 backdrop-blur-sm border border-purple-100 rounded-xl p-6 shadow-lg">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
         <div className="flex items-center space-x-3">
-          <div className={`p-2 rounded-lg ${isConnected ? 'bg-green-100' : 'bg-orange-100'}`}>
+          <div className={`p-3 rounded-xl ${isConnected ? 'bg-green-100' : 'bg-gradient-to-r from-purple-600 to-pink-600'}`}>
             {isConnected ? (
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-6 w-6 text-green-600" />
             ) : (
-              <AlertCircle className="h-5 w-5 text-orange-600" />
+              <TrendingUp className="h-6 w-6 text-white" />
             )}
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-800">TikTok Integration</h3>
+            <h3 className="text-xl font-semibold text-gray-800">TikTok Integration</h3>
             <p className="text-sm text-gray-600">
               {isConnected 
-                ? 'Your TikTok account is connected and ready for auto-posting' 
-                : 'Connect your TikTok account to enable automatic video publishing'
+                ? '✅ Connected and ready for auto-posting' 
+                : 'Connect your TikTok account to unlock analytics and auto-posting'
               }
             </p>
           </div>
@@ -45,32 +45,54 @@ export const TikTokConnector: React.FC<TikTokConnectorProps> = ({ user }) => {
         
         <div className="flex items-center space-x-3">
           {isConnected ? (
-            <div className="flex items-center space-x-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Connected</span>
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+              <div className="flex items-center space-x-2 text-green-600">
+                <CheckCircle className="h-4 w-4" />
+                <span className="text-sm font-medium">Connected</span>
+              </div>
+              <button className="text-sm text-gray-600 hover:text-red-600 transition-colors">
+                Disconnect
+              </button>
             </div>
           ) : (
             <button
               onClick={connectTikTok}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:from-purple-700 hover:to-pink-700 flex items-center space-x-2"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:from-purple-700 hover:to-pink-700 hover:scale-105 flex items-center space-x-2 shadow-lg"
             >
-              <ExternalLink className="h-4 w-4" />
+              <TrendingUp className="h-5 w-5" />
               <span>Connect TikTok</span>
+              <ExternalLink className="h-4 w-4" />
             </button>
           )}
         </div>
       </div>
       
       {!isConnected && (
-        <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-          <div className="flex items-start space-x-2">
-            <AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-orange-700">
-              <p className="font-medium mb-1">Action Required</p>
+        <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl">
+          <div className="flex items-start space-x-3">
+            <div className="bg-purple-100 p-2 rounded-lg">
+              <TrendingUp className="h-5 w-5 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-gray-800 mb-2">Unlock Full Analytics & Auto-Posting</h4>
               <p>
-                To start auto-posting your generated videos, you need to connect your TikTok account. 
-                This allows Vibe Shots to publish content on your behalf according to your schedule preferences.
+                Connect your TikTok account to access detailed performance analytics, automated posting, 
+                and AI-optimized scheduling based on your audience engagement patterns.
               </p>
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex items-center space-x-2 text-sm text-gray-700">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>Real-time analytics</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-700">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>Automated posting</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-700">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>Optimal timing AI</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
