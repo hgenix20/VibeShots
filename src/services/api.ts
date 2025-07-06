@@ -184,7 +184,6 @@ class ApiService {
   async getUser() {
     return await supabase.auth.getUser()
   }
-}
 
   async getReadyMedia(): Promise<{ success: boolean; data?: Media[]; error?: string }> {
     try {
@@ -300,4 +299,5 @@ class ApiService {
       }
     }
   }
+}
 export const apiService = new ApiService()
