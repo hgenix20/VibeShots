@@ -5,7 +5,7 @@ import { DashboardData, apiService } from '../services/api'
 import { TikTokConnector } from './TikTokConnector'
 
 interface AnalyticsDashboardProps {
-  user?: any
+  user: any
 }
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ user }) => {

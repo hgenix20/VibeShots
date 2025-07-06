@@ -7,14 +7,14 @@ interface TikTokConnectorProps {
 
 export const TikTokConnector: React.FC<TikTokConnectorProps> = ({ user }) => {
   // Check if user has TikTok access token (you'll need to add this field to your user data)
-  const isConnected = Boolean(user?.tiktokAccessToken)
+  const isConnected = Boolean(user?.user_metadata?.tiktokAccessToken)
 
   const connectTikTok = () => {
     const params = new URLSearchParams({
-      client_key: import.meta.env.VITE_TIKTOK_CLIENT_KEY || '',
+      client_key: import.meta.env.VITE_TIKTOK_CLIENT_KEY || 'sbaw95xcifhll8mkef',
       response_type: 'code',
       scope: 'user.info.basic,video.upload',
-      redirect_uri: `${window.location.origin}/api/tiktok/callback`,
+      redirect_uri: import.meta.env.VITE_TIKTOK_REDIRECT_URI || `${window.location.origin}/auth/tiktok/callback`,
       state: crypto.randomUUID(), // CSRF token
     }).toString()
 
@@ -50,7 +50,13 @@ export const TikTokConnector: React.FC<TikTokConnectorProps> = ({ user }) => {
                 <CheckCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">Connected</span>
               </div>
-              <button className="text-sm text-gray-600 hover:text-red-600 transition-colors">
+              <button 
+                onClick={() => {
+                  // TODO: Implement disconnect functionality
+                  console.log('Disconnecting TikTok account...')
+                }}
+                className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+              >
                 Disconnect
               </button>
             </div>

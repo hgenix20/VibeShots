@@ -13,9 +13,11 @@ export const MediaPreview: React.FC<MediaPreviewProps> = ({ media, onClose, onSc
   const [scheduledTime, setScheduledTime] = useState('')
 
   const handleSchedule = () => {
-    // TODO: Implement scheduling logic
-    console.log('Scheduling media:', media.id, 'for:', scheduledTime)
-    onSchedule()
+    if (scheduledTime) {
+      // TODO: Implement scheduling logic
+      console.log('Scheduling media:', media.id, 'for:', scheduledTime)
+      onSchedule()
+    }
   }
 
   const handlePostNow = () => {

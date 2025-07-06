@@ -180,7 +180,7 @@ export const PipelineStatus: React.FC<PipelineStatusProps> = ({ ideas, onPreview
                     onClick={() => onPreviewMedia({
                       id: idea.id,
                       idea: idea,
-                      script: idea.scripts?.[0],
+                      script: Array.isArray(idea.scripts) && idea.scripts.length > 0 ? idea.scripts[0] : null,
                       duration: 60,
                       file_size: 5000000,
                       format: 'mp4',

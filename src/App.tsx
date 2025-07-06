@@ -100,6 +100,7 @@ function App() {
               submitting={submitting}
               handleSubmitIdea={handleSubmitIdea}
               ideas={ideas}
+             user={user}
             />
           </Layout>
         } />
@@ -114,6 +115,7 @@ interface MainAppProps {
   submitting: boolean
   handleSubmitIdea: (text: string, options?: { priority?: number; targetAudience?: string; keywords?: string[] }) => Promise<void>
   ideas: Idea[]
+  user: any
 }
 
 const MainApp: React.FC<MainAppProps> = ({ 
@@ -121,7 +123,8 @@ const MainApp: React.FC<MainAppProps> = ({
   setActiveTab, 
   submitting, 
   handleSubmitIdea, 
-  ideas 
+  ideas,
+  user
 }) => {
   const tabs = [
     { id: 'submit' as Tab, label: 'Submit Idea', icon: Lightbulb },

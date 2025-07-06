@@ -15,7 +15,7 @@ export type Database = {
       user_preferences: {
         Row: {
           id: string
-          user_id: string
+          user_id: string | null
           optimal_post_times: string[]
           timezone: string
           content_style: string
@@ -25,7 +25,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id: string | null
           optimal_post_times?: string[]
           timezone?: string
           content_style?: string
@@ -35,7 +35,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id?: string
+          user_id?: string | null
           optimal_post_times?: string[]
           timezone?: string
           content_style?: string
@@ -47,7 +47,7 @@ export type Database = {
       ideas: {
         Row: {
           id: string
-          user_id: string
+          user_id: string | null
           text: string
           status: 'queued' | 'processing' | 'script_generated' | 'media_ready' | 'scheduled' | 'published' | 'failed'
           priority: number
@@ -61,7 +61,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id: string | null
           text: string
           status?: 'queued' | 'processing' | 'script_generated' | 'media_ready' | 'scheduled' | 'published' | 'failed'
           priority?: number
@@ -75,7 +75,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id?: string
+          user_id?: string | null
           text?: string
           status?: 'queued' | 'processing' | 'script_generated' | 'media_ready' | 'scheduled' | 'published' | 'failed'
           priority?: number
@@ -91,8 +91,8 @@ export type Database = {
       scripts: {
         Row: {
           id: string
-          idea_id: string
-          user_id: string
+          idea_id: string | null
+          user_id: string | null
           content: string
           hook: string | null
           call_to_action: string | null
@@ -105,9 +105,9 @@ export type Database = {
       media: {
         Row: {
           id: string
-          script_id: string
-          idea_id: string
-          user_id: string
+          script_id: string | null
+          idea_id: string | null
+          user_id: string | null
           type: 'audio' | 'video'
           status: 'generating' | 'ready' | 'uploaded' | 'deleted' | 'failed'
           file_path: string | null
@@ -123,9 +123,9 @@ export type Database = {
       schedules: {
         Row: {
           id: string
-          media_id: string
-          idea_id: string
-          user_id: string
+          media_id: string | null
+          idea_id: string | null
+          user_id: string | null
           scheduled_time: string
           status: 'pending' | 'uploading' | 'published' | 'failed' | 'cancelled'
           tiktok_video_id: string | null
@@ -140,8 +140,8 @@ export type Database = {
       analytics: {
         Row: {
           id: string
-          schedule_id: string
-          user_id: string
+          schedule_id: string | null
+          user_id: string | null
           tiktok_video_id: string
           views: number
           likes: number

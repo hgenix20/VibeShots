@@ -89,9 +89,11 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ onPreviewMedia }) 
   })
 
   const handleScheduleMedia = (mediaId: string, scheduledTime: string) => {
-    // TODO: Implement scheduling API call
-    console.log('Scheduling media:', mediaId, 'for:', scheduledTime)
-    fetchMedia() // Refresh data
+    if (scheduledTime) {
+      // TODO: Implement scheduling API call
+      console.log('Scheduling media:', mediaId, 'for:', scheduledTime)
+      fetchMedia() // Refresh data
+    }
   }
 
   const handlePostNow = (mediaId: string) => {
