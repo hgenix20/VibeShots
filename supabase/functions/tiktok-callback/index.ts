@@ -132,13 +132,22 @@ serve(async (req) => {
         })
         .eq('id', schedule.id)
 
+      // Get current retry count for the idea
+      const { data: currentIdea } = await supabaseClient
+        .from('ideas')
+        .select('retry_count')
+        .eq('id', schedule.idea_id)
+        .single()
+      
+      const newRetryCount = (currentIdea?.retry_count || 0) + 1
+
       // Update idea status to failed
       await supabaseClient
         .from('ideas')
         .update({
           status: 'failed',
           error_message: payload.error_message,
-          retry_count: supabaseClient.literal('retry_count + 1'),
+          retry_count: newRetryCount,
           updated_at: new Date().toISOString()
         })
         .eq('id', schedule.idea_id)

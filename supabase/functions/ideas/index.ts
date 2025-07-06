@@ -177,12 +177,22 @@ async function triggerScriptGeneration(ideaId: string, supabaseClient: any) {
 
   } catch (error) {
     console.error('Script generation error:', error)
+    
+    // Get current retry count
+    const { data: currentIdea } = await supabaseClient
+      .from('ideas')
+      .select('retry_count')
+      .eq('id', ideaId)
+      .single()
+    
+    const newRetryCount = (currentIdea?.retry_count || 0) + 1
+    
     await supabaseClient
       .from('ideas')
       .update({ 
         status: 'failed', 
         error_message: error.message,
-        retry_count: supabaseClient.literal('retry_count + 1')
+        retry_count: newRetryCount
       })
       .eq('id', ideaId)
   }
