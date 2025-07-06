@@ -18,6 +18,42 @@ export interface Idea {
   schedules?: any[]
 }
 
+export interface Media {
+  id: string
+  script_id: string | null
+  idea_id: string | null
+  user_id: string | null
+  type: 'audio' | 'video'
+  status: 'generating' | 'ready' | 'uploaded' | 'deleted' | 'failed'
+  file_path: string | null
+  file_size: number | null
+  duration: number | null
+  format: string | null
+  ai_model: string | null
+  generation_params: any | null
+  created_at: string
+  updated_at: string
+  idea?: Idea
+  script?: any
+}
+
+export interface Schedule {
+  id: string
+  media_id: string | null
+  idea_id: string | null
+  user_id: string | null
+  scheduled_time: string
+  status: 'pending' | 'uploading' | 'published' | 'failed' | 'cancelled'
+  tiktok_video_id: string | null
+  tiktok_share_url: string | null
+  upload_attempt_count: number
+  last_attempt_at: string | null
+  error_message: string | null
+  created_at: string
+  updated_at: string
+  media?: Media
+  idea?: Idea
+}
 export interface DashboardData {
   overview: {
     totalVideos: number
@@ -150,4 +186,118 @@ class ApiService {
   }
 }
 
+  async getReadyMedia(): Promise<{ success: boolean; data?: Media[]; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('media', {
+        method: 'GET',
+        body: { status: 'ready' }
+      })
+
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error fetching ready media:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch ready media'
+      }
+    }
+  }
+
+  async getScheduledMedia(): Promise<{ success: boolean; data?: Schedule[]; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('schedules', {
+        method: 'GET'
+      })
+
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error fetching scheduled media:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch scheduled media'
+      }
+    }
+  }
+
+  async scheduleMedia(
+    mediaId: string, 
+    scheduledTime: string
+  ): Promise<{ success: boolean; data?: Schedule; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('schedules', {
+        method: 'POST',
+        body: {
+          media_id: mediaId,
+          scheduled_time: scheduledTime
+        }
+      })
+
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error scheduling media:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to schedule media'
+      }
+    }
+  }
+
+  async postMediaNow(mediaId: string): Promise<{ success: boolean; data?: Schedule; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('post-now', {
+        method: 'POST',
+        body: { media_id: mediaId }
+      })
+
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error posting media now:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to post media'
+      }
+    }
+  }
+
+  async updateTikTokConnection(accessToken: string, refreshToken: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('tiktok-auth', {
+        method: 'POST',
+        body: {
+          access_token: accessToken,
+          refresh_token: refreshToken
+        }
+      })
+
+      if (error) throw error
+      return { success: true }
+    } catch (error) {
+      console.error('Error updating TikTok connection:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to update TikTok connection'
+      }
+    }
+  }
+
+  async disconnectTikTok(): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('tiktok-auth', {
+        method: 'DELETE'
+      })
+
+      if (error) throw error
+      return { success: true }
+    } catch (error) {
+      console.error('Error disconnecting TikTok:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to disconnect TikTok'
+      }
+    }
+  }
 export const apiService = new ApiService()

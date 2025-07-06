@@ -1,5 +1,6 @@
 import React from 'react'
 import { ExternalLink, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react'
+import { apiService } from '../services/api'
 
 interface TikTokConnectorProps {
   user: any
@@ -19,6 +20,20 @@ export const TikTokConnector: React.FC<TikTokConnectorProps> = ({ user }) => {
     }).toString()
 
     window.location.href = `https://open-api.tiktok.com/platform/oauth/connect?${params}`
+  }
+
+  const disconnectTikTok = async () => {
+    try {
+      const response = await apiService.disconnectTikTok()
+      if (response.success) {
+        // Refresh the page to update user state
+        window.location.reload()
+      } else {
+        console.error('Failed to disconnect TikTok:', response.error)
+      }
+    } catch (error) {
+      console.error('Error disconnecting TikTok:', error)
+    }
   }
 
   return (
@@ -52,8 +67,7 @@ export const TikTokConnector: React.FC<TikTokConnectorProps> = ({ user }) => {
               </div>
               <button 
                 onClick={() => {
-                  // TODO: Implement disconnect functionality
-                  console.log('Disconnecting TikTok account...')
+                  disconnectTikTok()
                 }}
                 className="text-sm text-gray-600 hover:text-red-600 transition-colors"
               >

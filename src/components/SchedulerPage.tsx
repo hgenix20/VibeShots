@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, Play, Send, Filter, Search, Grid, List } from 'lucide-react'
 import { format, addDays } from 'date-fns'
-import { apiService } from '../services/api'
+import { apiService, Media, Schedule } from '../services/api'
 
 interface SchedulerPageProps {
   onPreviewMedia: (media: any) => void
 }
 
 export const SchedulerPage: React.FC<SchedulerPageProps> = ({ onPreviewMedia }) => {
-  const [readyMedia, setReadyMedia] = useState<any[]>([])
-  const [scheduledMedia, setScheduledMedia] = useState<any[]>([])
+  const [readyMedia, setReadyMedia] = useState<Media[]>([])
+  const [scheduledMedia, setScheduledMedia] = useState<Schedule[]>([])
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [filterStatus, setFilterStatus] = useState<'all' | 'ready' | 'scheduled'>('all')
@@ -22,54 +22,17 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ onPreviewMedia }) 
   const fetchMedia = async () => {
     setLoading(true)
     try {
-      // TODO: Implement API calls to fetch ready and scheduled media
-      // Mock data for now
-      const mockReadyMedia = [
-        {
-          id: '1',
-          type: 'video',
-          status: 'ready',
-          duration: 58,
-          file_size: 4500000,
-          format: 'mp4',
-          created_at: new Date().toISOString(),
-          idea: { text: 'Top 5 productivity tips for remote workers' },
-          script: {
-            hook: 'Stop wasting time with these productivity hacks!',
-            content: 'Here are 5 game-changing productivity tips...',
-            call_to_action: 'Follow for more productivity tips!'
-          }
-        },
-        {
-          id: '2',
-          type: 'video',
-          status: 'ready',
-          duration: 45,
-          file_size: 3800000,
-          format: 'mp4',
-          created_at: new Date().toISOString(),
-          idea: { text: 'Quick morning routine for busy parents' },
-          script: {
-            hook: 'Busy parents, this 5-minute routine will save your mornings!',
-            content: 'Transform your chaotic mornings with this simple routine...',
-            call_to_action: 'Save this for tomorrow morning!'
-          }
-        }
-      ]
+      // Fetch ready media
+      const readyResponse = await apiService.getReadyMedia()
+      if (readyResponse.success && readyResponse.data) {
+        setReadyMedia(readyResponse.data)
+      }
 
-      const mockScheduledMedia = [
-        {
-          id: '3',
-          type: 'video',
-          status: 'scheduled',
-          scheduled_time: addDays(new Date(), 1).toISOString(),
-          duration: 52,
-          idea: { text: 'Best budget meal prep ideas' }
-        }
-      ]
-
-      setReadyMedia(mockReadyMedia)
-      setScheduledMedia(mockScheduledMedia)
+      // Fetch scheduled media
+      const scheduledResponse = await apiService.getScheduledMedia()
+      if (scheduledResponse.success && scheduledResponse.data) {
+        setScheduledMedia(scheduledResponse.data)
+      }
     } catch (error) {
       console.error('Error fetching media:', error)
     } finally {
@@ -77,7 +40,17 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ onPreviewMedia }) 
     }
   }
 
-  const filteredMedia = [...readyMedia, ...scheduledMedia].filter(media => {
+  const allMedia = [
+    ...readyMedia.map(m => ({ ...m, status: 'ready' as const })),
+    ...scheduledMedia.map(s => ({ 
+      ...s.media, 
+      status: 'scheduled' as const, 
+      scheduled_time: s.scheduled_time,
+      idea: s.idea || s.media?.idea 
+    }))
+  ].filter(Boolean)
+
+  const filteredMedia = allMedia.filter(media => {
     const matchesFilter = filterStatus === 'all' || 
       (filterStatus === 'ready' && media.status === 'ready') ||
       (filterStatus === 'scheduled' && media.status === 'scheduled')
@@ -89,17 +62,39 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ onPreviewMedia }) 
   })
 
   const handleScheduleMedia = (mediaId: string, scheduledTime: string) => {
-    if (scheduledTime) {
-      // TODO: Implement scheduling API call
-      console.log('Scheduling media:', mediaId, 'for:', scheduledTime)
-      fetchMedia() // Refresh data
+    if (!scheduledTime) return
+    
+    const scheduleMedia = async () => {
+      try {
+        const response = await apiService.scheduleMedia(mediaId, scheduledTime)
+        if (response.success) {
+          await fetchMedia() // Refresh data
+        } else {
+          console.error('Failed to schedule media:', response.error)
+        }
+      } catch (error) {
+        console.error('Error scheduling media:', error)
+      }
     }
+    
+    scheduleMedia()
   }
 
   const handlePostNow = (mediaId: string) => {
-    // TODO: Implement immediate posting API call
-    console.log('Posting media now:', mediaId)
-    fetchMedia() // Refresh data
+    const postNow = async () => {
+      try {
+        const response = await apiService.postMediaNow(mediaId)
+        if (response.success) {
+          await fetchMedia() // Refresh data
+        } else {
+          console.error('Failed to post media:', response.error)
+        }
+      } catch (error) {
+        console.error('Error posting media:', error)
+      }
+    }
+    
+    postNow()
   }
 
   if (loading) {

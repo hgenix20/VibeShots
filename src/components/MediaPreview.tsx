@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { X, Play, Pause, Calendar, Send, Download, Eye, Clock } from 'lucide-react'
 import { format } from 'date-fns'
+import { apiService } from '../services/api'
 
 interface MediaPreviewProps {
   media: any
@@ -13,17 +14,39 @@ export const MediaPreview: React.FC<MediaPreviewProps> = ({ media, onClose, onSc
   const [scheduledTime, setScheduledTime] = useState('')
 
   const handleSchedule = () => {
-    if (scheduledTime) {
-      // TODO: Implement scheduling logic
-      console.log('Scheduling media:', media.id, 'for:', scheduledTime)
-      onSchedule()
+    if (!scheduledTime) return
+    
+    const scheduleMedia = async () => {
+      try {
+        const response = await apiService.scheduleMedia(media.id, scheduledTime)
+        if (response.success) {
+          onSchedule()
+        } else {
+          console.error('Failed to schedule media:', response.error)
+        }
+      } catch (error) {
+        console.error('Error scheduling media:', error)
+      }
     }
+    
+    scheduleMedia()
   }
 
   const handlePostNow = () => {
-    // TODO: Implement immediate posting logic
-    console.log('Posting media now:', media.id)
-    onSchedule()
+    const postNow = async () => {
+      try {
+        const response = await apiService.postMediaNow(media.id)
+        if (response.success) {
+          onSchedule()
+        } else {
+          console.error('Failed to post media:', response.error)
+        }
+      } catch (error) {
+        console.error('Error posting media:', error)
+      }
+    }
+    
+    postNow()
   }
 
   const formatDuration = (seconds: number) => {

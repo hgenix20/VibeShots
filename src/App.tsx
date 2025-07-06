@@ -8,6 +8,7 @@ import { AnalyticsDashboard } from './components/AnalyticsDashboard'
 import { SchedulerPage } from './components/SchedulerPage'
 import { MediaPreview } from './components/MediaPreview'
 import { Layout } from './components/Layout'
+import { TikTokCallbackPage } from './pages/TikTokCallbackPage'
 import { TermsPage } from './pages/TermsPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { apiService, Idea } from './services/api'
@@ -90,6 +91,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/auth/tiktok/callback" element={<TikTokCallbackPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/" element={
